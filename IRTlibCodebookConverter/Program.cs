@@ -12,41 +12,46 @@ namespace CodebookConverter
     {
         static void Main(string[] args)
         {
+            try
+            { 
+                Console.ForegroundColor = ConsoleColor.Blue;
+                Console.WriteLine("IRTlib: CodebookConverter ({0})\n", typeof(Program).Assembly.GetName().Version.ToString());
+                Console.ResetColor();
 
-            Console.ForegroundColor = ConsoleColor.Blue;
-            Console.WriteLine("IRTlib: CodebookConverter ({0})\n", typeof(Program).Assembly.GetName().Version.ToString());
-            Console.ResetColor();
-             
-            string _codebookExcelFile = "";
-            string _codebookJSONFile = "";
-            string _svnRoot = Directory.GetParent(Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName)).Parent.Parent.Parent.Parent.Parent.FullName;
-            _codebookExcelFile = Path.Combine(_svnRoot, "CODEBOOKS", "ResultData", "CodeBook.xlsx");
-            _codebookJSONFile = Path.Combine(_svnRoot, "CODEBOOKS", "JsonFiles", "CodeBook.json"); 
+                string _codebookExcelFile = "";
+                string _codebookJSONFile = "";
+                
+                if (args.Length >= 2)
+                {
+                    _codebookExcelFile = args[0];
+                    _codebookJSONFile = args[1];
+                } 
+                else
+                {
+                    Console.WriteLine("- Please provide two arguments: Path to the Excel-File (Input) and path to the JSON-File (Output)");
+                    return;
+                }
+
+                if (!File.Exists(_codebookExcelFile))
+                {
+                    Console.WriteLine("- Codebook Excel-File (Input): {0} not found.", _codebookExcelFile);
+                    return;
+                }
+                else
+                {
+                    Console.WriteLine("- Codebook Excel-File (Input): {0}", _codebookExcelFile);
+                }
+
+                Console.WriteLine("- Codebook JSON-File (Output): {0}", _codebookJSONFile);
+
+                Convert(_codebookExcelFile, _codebookJSONFile);
+            }
+            catch (Exception _ex)
+            {
+                Console.WriteLine("Error:");
+                Console.WriteLine(_ex.ToString());
+            }
             
-            if (args.Length >= 1)
-            {
-                _codebookExcelFile = args[0];
-            }
-
-            if (args.Length >= 2)
-            {
-                _codebookJSONFile = args[1];
-            }
-             
-            if (!File.Exists(_codebookExcelFile))
-            {
-                Console.WriteLine("- Codebook Excel-File (Input): {0} not found.", _codebookExcelFile);
-                return;
-            } 
-            else
-            {
-                Console.WriteLine("- Codebook Excel-File (Input): {0}", _codebookExcelFile);
-            }
-
-            Console.WriteLine("- Codebook JSON-File (Output): {0}", _codebookJSONFile);
-             
-            Convert(_codebookExcelFile, _codebookJSONFile);
-
         }
 
         static void Convert(string ExcelFile, string JSONFile)
@@ -169,12 +174,7 @@ namespace CodebookConverter
             _json += "]\n";
             _json += "\n}";
 
-            // Format JSON
 
-            var jsonObject = JsonDocument.Parse(_json);
-            _json = System.Text.Json.JsonSerializer.Serialize(jsonObject,
-            new JsonSerializerOptions() { WriteIndented = true });
-             
             // Write to File
 
             File.WriteAllText(JSONFile, _json);
