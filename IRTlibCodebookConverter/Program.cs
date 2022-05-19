@@ -13,19 +13,20 @@ namespace CodebookConverter
         static void Main(string[] args)
         {
             try
-            { 
+            {
+
                 Console.ForegroundColor = ConsoleColor.Blue;
                 Console.WriteLine("IRTlib: CodebookConverter ({0})\n", typeof(Program).Assembly.GetName().Version.ToString());
                 Console.ResetColor();
 
                 string _codebookExcelFile = "";
                 string _codebookJSONFile = "";
-                
+
                 if (args.Length >= 2)
                 {
                     _codebookExcelFile = args[0];
                     _codebookJSONFile = args[1];
-                } 
+                }
                 else
                 {
                     Console.WriteLine("- Please provide two arguments: Path to the Excel-File (Input) and path to the JSON-File (Output)");
@@ -51,7 +52,7 @@ namespace CodebookConverter
                 Console.WriteLine("Error:");
                 Console.WriteLine(_ex.ToString());
             }
-            
+
         }
 
         static void Convert(string ExcelFile, string JSONFile)
@@ -117,7 +118,7 @@ namespace CodebookConverter
                             _variablesDict[_variableKey].Values.Add(_valueKey, new HitMiss()
                             {
                                 Hit = sheet.GetRow(row).GetCell(4).ToString(),
-                                Label = RemoveUmlaute(sheet.GetRow(row).GetCell(8).StringCellValue),
+                                Label = RemoveUmlaute(sheet.GetRow(row).GetCell(8).ToString()),
                                 Value = sheet.GetRow(row).GetCell(7).ToString(),   
                                 ResultText = _resultText
                             });;
